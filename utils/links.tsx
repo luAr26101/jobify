@@ -9,7 +9,7 @@ type NavLink = {
 export const links: NavLink[] = [
   {
     href: "/add-job",
-    label: "add Job",
+    label: "add job",
     icon: <LuLayers />,
   },
   {
