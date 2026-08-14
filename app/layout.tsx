@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import Providers from "@/app/providers";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 // font used for favicon: ADLaM Display 400, 72 font-size
@@ -35,7 +36,10 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <ClerkProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+            <Toaster />
+          </Providers>
         </ClerkProvider>
       </body>
     </html>
