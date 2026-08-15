@@ -1,24 +1,19 @@
 import CreateJobForm from "@/components/create-job-form";
-import { prisma } from "@/utils/db";
 import { auth } from "@clerk/nextjs/server";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
 async function AddJobPage() {
   // Redirects to the sign-in route if the user is not signed in
   await auth.protect();
-  const users = await prisma.testProfile.findMany();
+  const queryClient = new QueryClient();
   return (
-    <div>
-      <div>
-        {users.map((user) => {
-          return (
-            <h2 key={user.id} className="text-2xl font-bold">
-              {user.name}
-            </h2>
-          );
-        })}
-      </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
       <CreateJobForm />
-    </div>
+    </HydrationBoundary>
   );
 }
 
