@@ -2412,35 +2412,41 @@ This will generate jobs with the correct createdAt dates (within the last six mo
   [docs](https://www.mockaroo.com/)
 - copy from assets or final project
 - log user id
-- create seed.js
-- run "node prisma/seed"
+- create seed.ts
+- run "npx prisma db seed"
 
-```js
-const { PrismaClient } = require("@prisma/client");
-const data = require("./mock-data.json");
-const prisma = new PrismaClient();
+```ts
+import { Prisma, PrismaClient } from "@/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import "dotenv/config";
+import { Pool } from "pg";
+import data from "./mock-data.json";
 
-async function main() {
-  const clerkId = "user_2ZUfUOtKM8W9eF8hSQbISv7aQmn";
-  const jobs = data.map((job) => {
-    return {
-      ...job,
-      clerkId,
-    };
-  });
-  for (const job of jobs) {
-    await prisma.job.create({
-      data: job,
-    });
+const connectionString = `${process.env.DATABASE_URL}`;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
+const clerkId = "ENTER USER'S CLERK ID";
+const jobData: Prisma.JobCreateInput[] = data.map((job) => ({
+  ...job,
+  clerkId,
+}));
+
+export async function main() {
+  for (const job of jobData) {
+    await prisma.job.create({ data: job });
   }
 }
+
 main()
   .then(async () => {
     await prisma.$disconnect();
+    await pool.end();
   })
   .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
+    await pool.end();
     process.exit(1);
   });
 ```
