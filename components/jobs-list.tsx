@@ -1,5 +1,7 @@
 "use client";
 
+// import ButtonContainer from "@/components/button-container";
+import ComplexButtonContainer from "@/components/complex-button-container";
 import JobCard from "@/components/job-card";
 import { getAllJobsAction } from "@/utils/actions";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +19,10 @@ function JobsList() {
   });
   const jobs = data?.jobs || [];
 
+  const count = data?.count || 0;
+  const page = data?.page || 0;
+  const totalPages = data?.totalPages || 0;
+
   if (isPending) {
     return <h2 className="text-xl">Please wait ...</h2>;
   }
@@ -28,6 +34,12 @@ function JobsList() {
   return (
     <>
       {/* button container */}
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xl font-semibold capitalize">{count} jobs found</h2>
+        {totalPages < 2 ? null : (
+          <ComplexButtonContainer currentPage={page} totalPages={totalPages} />
+        )}
+      </div>
       <div className="grid gap-8 md:grid-cols-2">
         {jobs.map((job) => {
           return <JobCard key={job.id} job={job} />;
